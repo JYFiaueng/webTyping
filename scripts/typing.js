@@ -296,7 +296,11 @@ window.onload = function() {
 		}
 	};
 	var localUserDefine = function(){
-		userCourse = JSON.parse(localStorage.getItem('uC'));
+		if( localStorage.getItem('uC') ){
+			userCourse = JSON.parse(localStorage.getItem('uC'));
+		}else{
+			userCourse = [];
+		}
 		userCount = userCourse.length - 1;
 		for(var i = 0; i <= userCount; i++){
 			var li = document.createElement('li');
