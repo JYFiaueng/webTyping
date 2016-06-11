@@ -65,6 +65,7 @@ window.onload = function() {
 	var userHistoryMarkN = Util.C$('mark')[4];
 	var userHistoryCourseListN = Util.C$('courseList')[2];
 	var userHistoryCourseCloseN = Util.C$('close')[3];
+	var clearUserInfoN = Util.$('clearUserInfo');
 	//-----------------这里放一些功能型函数-------------------
 	//文本重置
 	var loadText = function(text, container, lineWidth) {
@@ -168,8 +169,22 @@ window.onload = function() {
 		localStorage.setItem('uC', JSON.stringify(userCourse));
 		var li = document.createElement('li');
 		li.id = 'user'+c.id;
-		li.innerHTML = '<br/>自定义号:'+c.id+'<br/>time:'+c.time;
+		li.innerHTML = '<span class="userDelLi">×</span>'+'<br/>自定义号:'+c.id+'<br/>time:'+c.time;
 		userHistoryCourseListN.appendChild(li);
+	};
+	var clearUserInfo = function(){
+		localStorage.removeItem('uC');
+		userCourse = [];
+		userHistoryCourseListN.innerHTML = '';
+	};
+	var delUserInfo = function(delId){
+		for(var i = delId; i < userCourse.length-2; i++){
+			userCourse[i] = userCourse[i+1];
+		}
+		userCourse.length = userCourse.length-1;
+		userHistoryCourseListN.innerHTML = '';
+		localStorage.setItem('uC', JSON.stringify(userCourse));
+		localUserDefine();
 	};
 	//倒计时
 	var countDown = function(){
@@ -305,7 +320,7 @@ window.onload = function() {
 		for(var i = 0; i <= userCount; i++){
 			var li = document.createElement('li');
 			li.id = 'user'+userCourse[i].id;
-			li.innerHTML = '<br/>自定义号:'+li.id+'<br/>time:'+userCourse[i].time;
+			li.innerHTML = '<span class="userDelLi">×</span>'+'<br/>自定义号:'+li.id+'<br/>time:'+userCourse[i].time;
 			userHistoryCourseListN.appendChild(li);
 		}
 	};
@@ -391,13 +406,22 @@ window.onload = function() {
 		Util.hidden(userHistoryMarkN);
 	};
 	userHistoryCourseListN.onclick = function(e){
+		if(e.target.className){
+			var delId = e.target.id.substring(4);
+			delUserInfo(delId);
+		}
 		if(e.target.id){
 			nowId = -1;
 			var userId = e.target.id.substring(4);
 			complete = false;
+			userStr = userCourse[userId].content;
+			userTime = userCourse[userId].time;
 			resetting(userCourse[userId].content, userCourse[userId].time);
 			Util.hidden(userHistoryMarkN);
 		}
+	};
+	clearUserInfoN.onclick = function(){
+		clearUserInfo();
 	};
 	randomId.onclick = function(){
 		randId = parseInt(Math.random()*(course.length-1));

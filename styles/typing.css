@@ -377,6 +377,24 @@ ul.status li em
 	color: #390;
 	text-shadow: 1px 1px 1px #39f;
 }
+.mark .dialog input[type='button']{
+	border: none;
+	position: absolute;
+	right: 10px;
+	bottom: 10px;
+	width: 110px;
+	height: 30px;
+	cursor: pointer;
+	background-color: #9f9;
+	border-radius: 5px;
+	font-size: 14px;
+	color: #306;
+	font-weight: bold;
+	transition: all 0.3s;
+}
+.mark .dialog input[type='button']:hover{
+	background-color: #f00;
+}
 .mark .dialog .close{
 	position: absolute;
 	top: 20px;
@@ -408,6 +426,36 @@ ul.status li em
 	text-align: center;
 	border-radius: 5px;
 	background-color: rgba(30, 255, 255, 0.3);
+}
+.mark .dialog ul li span{
+	width: 20px;
+	height: 20px;
+	color: red;
+	position: absolute;
+	right: 1px;
+	top: 1px;
+	border-radius: 2px;
+	line-height: 20px;
+	text-align: center;
+	background-color: rgba(50, 222, 100, 0.6);
+	cursor: pointer;
+	transition: all 0.2s;
+}
+.mark .dialog ul li span::after{
+	content: '';
+	position: absolute;
+	right: -15px;
+	width: 15px;
+	height: 40px;
+	background-color: rgba(50, 222, 100, 0);
+}
+.mark .dialog ul li span:hover::after{
+	content: '删除';
+	background-color: rgba(50, 222, 100, 0.6);
+}
+.mark .dialog ul li span:hover{
+	font-weight: bold;
+	background-color: rgba(50, 222, 100, 1);
 }
 .mark .dialog ul li::before{
 	content: '';
