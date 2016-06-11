@@ -33,7 +33,9 @@ window.onload = function() {
 	var timeout = 5000;//请求超时值，本地测试改成5毫秒就能出现了
 	var liBgcolor = 'rgba(100,200,150,0.7)';//li点击之后的背景色
 	var userCourse = [];//用户自定义课程
-	var userCount = -1;
+	var userCount = -1;//用户自定义课程id
+	var log = [];//日志记录对象，记录用户按每个键的时间戳，本来想做一个按键回放功能的，
+	var logKCount = 0;
 	//-------------------这里放需要进行DOM操作的变量------------------
 	var timerN =  Util.$('timer');
 	var controllerN = Util.$('controller');
@@ -66,6 +68,7 @@ window.onload = function() {
 	var userHistoryCourseListN = Util.C$('courseList')[2];
 	var userHistoryCourseCloseN = Util.C$('close')[3];
 	var clearUserInfoN = Util.$('clearUserInfo');
+	var playbackN = Util.$('playback');
 	//-----------------这里放一些功能型函数-------------------
 	//文本重置
 	var loadText = function(text, container, lineWidth) {
@@ -274,6 +277,7 @@ window.onload = function() {
 		selectKey(currCharIndex);
 		selectFinger(currCharIndex);
 	};
+	//重置函数，这里重置所有有关变量开始新的一次练习
 	var resetting = function(Rtext, Rtime){
 		text = Rtext;
 		time = Rtime;
@@ -284,8 +288,10 @@ window.onload = function() {
 		kpmT = 0;//击键正确数，错一次减少一次
 		kpmAllTime = time;//击键总时间
 		kpmN.innerHTML = '0';
-		pass = false;
+		pass = false;//是否通过
 		rate.innerHTML = '0%';
+		log = [];//击键记录
+		logKCount = 0;//击键次数记录
 		stop();
 		countDown();
 		loadText(text, textN, strLength);
@@ -332,6 +338,38 @@ window.onload = function() {
 		loadText(text, textN, strLength);
 		updateView();
 		countDown();
+	};
+	//回放功能实现，回放上一次的按键过程
+	var playback = function(){
+		if(logKCount === 0){
+			return;
+		}
+		//把log里面的东西全部复制一遍，用其副本来进行回放，其原本会在每次controller()时重置
+		var logKCountCopy = logKCount;
+		var logCopy = [];
+		for(var j = 0; j < logKCountCopy; j++){
+			var logKCopy = {};
+			logKCopy.t = log[j].t;
+			logKCopy.k = log[j].k;
+			logCopy[j] = logKCopy;
+		}
+		controller();
+		var event = {};
+		var i = 0;
+		var timeDifference = 0;
+		event.keyCode = 13;
+		okd(event);
+		var pb = function(){
+			event.keyCode = logCopy[i].k;
+			okp(event);
+			if(i+1 === logKCountCopy){
+				return;
+			}
+			timeDifference = logCopy[i+1].t - logCopy[i].t;
+			i++;
+			setTimeout(pb, timeDifference);
+		};
+		setTimeout(pb, 1000);
 	};
 	//-------------------------------事件绑定区-------------------------------
 	changeCourseN.onclick = function(){
@@ -434,6 +472,7 @@ window.onload = function() {
 		alreadyId[randId] = 1;
 		Util.$(randId).style.backgroundColor = liBgcolor;
 	};
+	playbackN.onclick = playback;
 	// markN.onclick = function(){
 	// 	Util.hidden(markN);
 	// };
@@ -445,13 +484,13 @@ window.onload = function() {
 	// 	userTextN.value = '';
 	// 	userTimeN.value = '';
 	// };
-	document.onkeypress = function(event) {
+	var okp = function(event) {
+		console.log(event.keyCode || event.which || event.charCode);
 		if(!run){
 			return;
 		}
 		var keyCode = event.keyCode || event.which || event.charCode;
 		var keyChar = String.fromCharCode(keyCode);
-		// console.log(keyCode);
 		if(keyCode === 13 || keyCode === 8){
 			return;
 		}
@@ -491,22 +530,38 @@ window.onload = function() {
 			updateView();
 		}
 		kc++;//记录有效击键次数
+		//下面是击键日志记录
+		var logK = {};
+		logK.k = keyCode;
+		logK.t = +new Date();
+		log[logKCount] = logK;
+		logKCount++;
 	};
 
-	document.onkeydown = function(event) {
+	document.onkeypress = okp;
+	//直接将okp写在后面监听不到空格，不知道为什么，所以在onkeydown里面case一下，直接调用传入事件对象
+	//虽然通过这种方式能够完成功能，但是还是没有解决onkeydown监听不到空格的问题，坑
+
+	var okd = function(event) {
 		var keyCode = event.keyCode || event.which || event.charCode;
+		if(keyCode === 32){
+        	event.preventDefault();//屏蔽浏览器默认的空格快捷功能，
+		}
 		switch(keyCode){
 			case 13: controller();break;
+			case 32: okp(event);break;
 			default: break;
 		}
 		updateView();
 	};
 
+	document.onkeydown = okd;
+
 	toggleN.onclick = (function(){
 		var toggle = true;
 		return function(){
 			if(toggle){
-				Util.animate(divBtnN, 'top', -440);
+				Util.animate(divBtnN, 'top', -493);
 				toggleN.value = '展开';
 				toggle = false;
 			}else{
