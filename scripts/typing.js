@@ -37,6 +37,7 @@ window.onload = function() {
 	var logKCount = 0;//日志记录的次数，就是log的长度
 	var isPlayback = false;//当前是否正在回放练习
 	var controllerSpace = true;//解决禁掉浏览器默认空格快捷键之后用户自定义文本框无法输入空格的问题
+	var markNowEnter = false;//标示当前处于遮罩状态回车无效
 ////////////////-------------------这里放需要进行DOM操作的变量------------------
 	var timerN =  Util.$('timer');
 	var controllerN = Util.$('controller');
@@ -411,11 +412,13 @@ window.onload = function() {
 		if(isPlaybackFn()){
 			return;
 		}
+		markNowEnter = true;
 		Util.show(markN);
 		clickBtnStop();
 	};
 	courseCloseN.onclick = function(){
 		Util.hidden(markN);
+		markNowEnter = false;
 	};
 	//点击选择课程列表开始对应的课程
 	courseListN.onclick = function(e){
@@ -424,6 +427,7 @@ window.onload = function() {
 			complete = false;
 			resetting(course[nowId].content, course[nowId].time);
 			Util.hidden(markN);
+			markNowEnter = false;
 			alreadyId[nowId] = 1;
 			e.target.style.backgroundColor = liBgcolor;
 		}
@@ -431,11 +435,13 @@ window.onload = function() {
 	//历史记录的显示隐藏
 	courseCloseNhistory.onclick = function(){
 		Util.hidden(markNhistory);
+		markNowEnter = false;
 	};
 	historyN.onclick = function(){
 		if(isPlaybackFn()){
 			return;
 		}
+		markNowEnter = true;
 		Util.show(markNhistory);
 		clickBtnStop();
 	};
@@ -446,6 +452,7 @@ window.onload = function() {
 			complete = false;
 			resetting(course[nowId].content, course[nowId].time);
 			Util.hidden(markNhistory);
+			markNowEnter = false;
 			alreadyId[nowId] = 1;
 		}
 	};
@@ -455,6 +462,7 @@ window.onload = function() {
 		controllerSpace = true;//置为true屏蔽浏览器的默认空格事件
 		userTextN.value = '';
 		userTimeN.value = '';
+		markNowEnter = false;
 	};
 	userDefineN.onclick = function(){
 		if(isPlaybackFn()){
@@ -462,6 +470,7 @@ window.onload = function() {
 		}
 		controllerSpace = false;//置为false让用户可以输入空格
 		Util.show(markNuser);
+		markNowEnter = true;
 		clickBtnStop();
 	};
 	//添加自定义练习
@@ -488,6 +497,7 @@ window.onload = function() {
 		userInfoPush(userTime, userStr);
 		resetting(userStr, userTime);
 		Util.hidden(markNuser);
+		markNowEnter = false;
 		controllerSpace = true;//置为true屏蔽浏览器的默认空格事件
 		userTextN.value = '';
 		userTimeN.value = '';
@@ -498,10 +508,12 @@ window.onload = function() {
 			return;
 		}
 		Util.show(userHistoryMarkN);
+		markNowEnter = true;
 		clickBtnStop();
 	};
 	userHistoryCourseCloseN.onclick = function(){
 		Util.hidden(userHistoryMarkN);
+		markNowEnter = false;
 	};
 	//用户自定义课程列表
 	userHistoryCourseListN.onclick = function(e){
@@ -519,6 +531,7 @@ window.onload = function() {
 			userTime = userCourse[userId].time;
 			resetting(userCourse[userId].content, userCourse[userId].time);
 			Util.hidden(userHistoryMarkN);
+			markNowEnter = false;
 		}
 	};
 	//清空自定义练习
@@ -618,6 +631,9 @@ window.onload = function() {
         	//虽然能够做到屏蔽快捷键的能力，但是在自定义练习的文本框中添加文本时就没法敲空格了
 		}
 		if(isPlaybackFn()){
+			return;
+		}
+		if(markNowEnter){
 			return;
 		}
 		switch(keyCode){
