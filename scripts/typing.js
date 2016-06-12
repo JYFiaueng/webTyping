@@ -36,7 +36,7 @@ window.onload = function() {
 	var log = [];//日志记录对象，记录用户按每个键的时间戳和对应键，一个按键回放功能
 	var logKCount = 0;//日志记录的次数，就是log的长度
 	var isPlayback = false;//当前是否正在回放练习
-	var controllerSpace = true;
+	var controllerSpace = true;//解决禁掉浏览器默认空格快捷键之后用户自定义文本框无法输入空格的问题
 ////////////////-------------------这里放需要进行DOM操作的变量------------------
 	var timerN =  Util.$('timer');
 	var controllerN = Util.$('controller');
@@ -616,6 +616,9 @@ window.onload = function() {
 		if(keyCode === 32 && controllerSpace){
         	event.preventDefault();//屏蔽浏览器默认的空格快捷功能，
         	//虽然能够做到屏蔽快捷键的能力，但是在自定义练习的文本框中添加文本时就没法敲空格了
+		}
+		if(isPlaybackFn()){
+			return;
 		}
 		switch(keyCode){
 			case 13: controller();break;
