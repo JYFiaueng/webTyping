@@ -35,6 +35,8 @@ window.onload = function() {
 	var userCount = -1;//用户自定义课程id
 	var log = [];//日志记录对象，记录用户按每个键的时间戳和对应键，一个按键回放功能
 	var logKCount = 0;//日志记录的次数，就是log的长度
+	var isPlayback = false;//当前是否正在回放练习
+	var controllerSpace = true;
 ////////////////-------------------这里放需要进行DOM操作的变量------------------
 	var timerN =  Util.$('timer');
 	var controllerN = Util.$('controller');
@@ -247,7 +249,7 @@ window.onload = function() {
 	var stop = function(){
 		run = false;
 		if(complete){
-			controllerN.value = '回车重来此局';
+			controllerN.value = '回车重来';
 		}else{
 			controllerN.value = '回车开始';
 		}
@@ -353,6 +355,10 @@ window.onload = function() {
 		if(!run && !complete){
 			return;
 		}
+		//正在练习过程中点击回放无效
+		if(run && !complete){
+			return;
+		}
 		//把log里面的东西全部复制一遍，用其副本来进行回放，其原本会在每次controller()时重置
 		var logKCountCopy = logKCount;
 		var logCopy = [];
@@ -369,11 +375,13 @@ window.onload = function() {
 		//触发一次回车开始，模拟用户按键
 		event.keyCode = 13;
 		okd(event);
+		isPlayback = true;
 		//根据两次按键的时间差来进行回放
 		var pb = function(){
 			event.keyCode = logCopy[i].k;
 			okp(event);
 			if(i+1 === logKCountCopy){
+				isPlayback = false;
 				return;
 			}
 			timeDifference = logCopy[i+1].t - logCopy[i].t;
@@ -389,9 +397,20 @@ window.onload = function() {
 			controller();
 		}
 	};
+	//此函数是为了解决在回放的时候点击其他按钮导致回放结束的问题，但这不是根本的解决方法
+	//这样只是在回放的时候禁止用户的点击，最好的效果是点击其他按钮暂停回放，关闭遮罩之后继续回放
+	//好的效果没想到什么好的解决办法，所以只能强制不让点击了，⊙﹏⊙‖∣
+	var isPlaybackFn = function(){
+		if(isPlayback){
+			return true;
+		}
+	};
 	//-------------------------------事件绑定区-------------------------------
 	//选择课程的显示隐藏
 	changeCourseN.onclick = function(){
+		if(isPlaybackFn()){
+			return;
+		}
 		Util.show(markN);
 		clickBtnStop();
 	};
@@ -414,6 +433,9 @@ window.onload = function() {
 		Util.hidden(markNhistory);
 	};
 	historyN.onclick = function(){
+		if(isPlaybackFn()){
+			return;
+		}
 		Util.show(markNhistory);
 		clickBtnStop();
 	};
@@ -430,10 +452,15 @@ window.onload = function() {
 	//自定义练习的显示隐藏
 	courseCloseNuser.onclick = function(){
 		Util.hidden(markNuser);
+		controllerSpace = true;//置为true屏蔽浏览器的默认空格事件
 		userTextN.value = '';
 		userTimeN.value = '';
 	};
 	userDefineN.onclick = function(){
+		if(isPlaybackFn()){
+			return;
+		}
+		controllerSpace = false;//置为false让用户可以输入空格
 		Util.show(markNuser);
 		clickBtnStop();
 	};
@@ -461,11 +488,15 @@ window.onload = function() {
 		userInfoPush(userTime, userStr);
 		resetting(userStr, userTime);
 		Util.hidden(markNuser);
+		controllerSpace = true;//置为true屏蔽浏览器的默认空格事件
 		userTextN.value = '';
 		userTimeN.value = '';
 	};
 	//自定义历史的显示隐藏
 	userHistoryN.onclick = function(){
+		if(isPlaybackFn()){
+			return;
+		}
 		Util.show(userHistoryMarkN);
 		clickBtnStop();
 	};
@@ -496,6 +527,9 @@ window.onload = function() {
 	};
 	//随机课程绑定
 	randomId.onclick = function(){
+		if(isPlaybackFn()){
+			return;
+		}
 		randId = parseInt(Math.random()*(course.length-1));
 		if(!course[randId]){
 			return;
@@ -579,7 +613,7 @@ window.onload = function() {
 
 	var okd = function(event) {
 		var keyCode = event.keyCode || event.which || event.charCode;
-		if(keyCode === 32){
+		if(keyCode === 32 && controllerSpace){
         	event.preventDefault();//屏蔽浏览器默认的空格快捷功能，
         	//虽然能够做到屏蔽快捷键的能力，但是在自定义练习的文本框中添加文本时就没法敲空格了
 		}
