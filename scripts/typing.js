@@ -1,9 +1,8 @@
 window.onload = function() {
 
-	//---------------------------这里放全局使用的一些变量---------------------------------
-	//初始文本
-	var initStr = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Possimus';
-	var initTime = 30;
+//////////////////------------------这里放全局使用的一些变量----------------------
+	var initStr = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Possimus';//初始文本
+	var initTime = 30;//初始时间
 	var text = initStr;
 	var fingerKeys = [" ","tgbrfv","edc","wsx","qaz", " ","yhnujm", "ik,","ol.","p;?\""];//键位指位
 	var currCharIndex = 0;//字符数
@@ -34,9 +33,9 @@ window.onload = function() {
 	var liBgcolor = 'rgba(100,200,150,0.7)';//li点击之后的背景色
 	var userCourse = [];//用户自定义课程
 	var userCount = -1;//用户自定义课程id
-	var log = [];//日志记录对象，记录用户按每个键的时间戳，本来想做一个按键回放功能的，
-	var logKCount = 0;
-	//-------------------这里放需要进行DOM操作的变量------------------
+	var log = [];//日志记录对象，记录用户按每个键的时间戳和对应键，一个按键回放功能
+	var logKCount = 0;//日志记录的次数，就是log的长度
+////////////////-------------------这里放需要进行DOM操作的变量------------------
 	var timerN =  Util.$('timer');
 	var controllerN = Util.$('controller');
 	var markN = Util.C$('mark')[0];
@@ -69,7 +68,7 @@ window.onload = function() {
 	var userHistoryCourseCloseN = Util.C$('close')[3];
 	var clearUserInfoN = Util.$('clearUserInfo');
 	var playbackN = Util.$('playback');
-	//-----------------这里放一些功能型函数-------------------
+//////////////-----------------这里放一些功能型函数-------------------
 	//文本重置
 	var loadText = function(text, container, lineWidth) {
 		var p = null;
@@ -143,7 +142,7 @@ window.onload = function() {
 			}
 		}
 	};
-	//练习记录
+	//练习记录，练习一次添加一次，有两次调用，分别是练习通过和未通过的时候
 	var infoPush = function(){
 		var c = {};
 		c.id = nowId;
@@ -175,16 +174,19 @@ window.onload = function() {
 		li.innerHTML = '<span class="userDelLi">×</span>'+'<br/>自定义号:'+c.id+'<br/>time:'+c.time;
 		userHistoryCourseListN.appendChild(li);
 	};
+	//清空用户的本地练习记录
 	var clearUserInfo = function(){
 		localStorage.removeItem('uC');
 		userCourse = [];
 		userHistoryCourseListN.innerHTML = '';
 	};
+	//删除用户的某一个本地练习记录
 	var delUserInfo = function(delId){
 		for(var i = delId; i < userCourse.length-2; i++){
 			userCourse[i] = userCourse[i+1];
 		}
 		userCourse.length = userCourse.length-1;
+		//删除一项之后重新写入读取一次本地数据
 		userHistoryCourseListN.innerHTML = '';
 		localStorage.setItem('uC', JSON.stringify(userCourse));
 		localUserDefine();
@@ -193,6 +195,7 @@ window.onload = function() {
 	var countDown = function(){
 		if(run){
 			t = setInterval(function(){
+				//如果限定的时间已经到了本次练习直接停止
 				if(time === 0){
 					timerN.innerHTML = failStr;
 					if(nowId !== -1){
@@ -206,6 +209,7 @@ window.onload = function() {
 				time--;
 				kpm = parseInt(kc / ((kpmAllTime - time)/60));
 				kpmN.innerHTML = kpm;
+				//如果一开始就算Tkpm，currCharIndex就会出现除数为0的情况，所以加个判断
 				if(currCharIndex !== 0){
 					Tkpm = parseInt((currCharIndex-kpmT)/currCharIndex*100)+'%';
 					rate.innerHTML = Tkpm;
@@ -277,7 +281,7 @@ window.onload = function() {
 		selectKey(currCharIndex);
 		selectFinger(currCharIndex);
 	};
-	//重置函数，这里重置所有有关变量开始新的一次练习
+	//重置函数，这里重置所有有关变量和函数开始新的一次练习
 	var resetting = function(Rtext, Rtime){
 		text = Rtext;
 		time = Rtime;
@@ -297,7 +301,7 @@ window.onload = function() {
 		loadText(text, textN, strLength);
 		updateView();
 	};
-	//用户足迹记录
+	//用户足迹记录，添加一个cookie，检测用户来过没有
 	var welcomeCookie = function(){
 		if(Util.CookieUtil.get('come')){
 			welcomeN.innerHTML = '欢迎回来';
@@ -316,6 +320,7 @@ window.onload = function() {
 			}, 2000);
 		}
 	};
+	//初次加载时检测浏览器是否保存了用户自定义练习的数据
 	var localUserDefine = function(){
 		if( localStorage.getItem('uC') ){
 			userCourse = JSON.parse(localStorage.getItem('uC'));
@@ -344,6 +349,10 @@ window.onload = function() {
 		if(logKCount === 0){
 			return;
 		}
+		//当练习到一半回车暂停时无法点击回放
+		if(!run && !complete){
+			return;
+		}
 		//把log里面的东西全部复制一遍，用其副本来进行回放，其原本会在每次controller()时重置
 		var logKCountCopy = logKCount;
 		var logCopy = [];
@@ -357,8 +366,10 @@ window.onload = function() {
 		var event = {};
 		var i = 0;
 		var timeDifference = 0;
+		//触发一次回车开始，模拟用户按键
 		event.keyCode = 13;
 		okd(event);
+		//根据两次按键的时间差来进行回放
 		var pb = function(){
 			event.keyCode = logCopy[i].k;
 			okp(event);
@@ -371,13 +382,23 @@ window.onload = function() {
 		};
 		setTimeout(pb, 1000);
 	};
+	//此函数的作用是为了在用户练习期间点击了按钮，那么就将练习停止
+	//不然的话点击了按钮出来遮罩层练习的倒计时还在进行中
+	var clickBtnStop = function(){
+		if(run){
+			controller();
+		}
+	};
 	//-------------------------------事件绑定区-------------------------------
+	//选择课程的显示隐藏
 	changeCourseN.onclick = function(){
 		Util.show(markN);
+		clickBtnStop();
 	};
 	courseCloseN.onclick = function(){
 		Util.hidden(markN);
 	};
+	//点击选择课程列表开始对应的课程
 	courseListN.onclick = function(e){
 		if(e.target.id){
 			nowId = e.target.id;
@@ -388,12 +409,15 @@ window.onload = function() {
 			e.target.style.backgroundColor = liBgcolor;
 		}
 	};
+	//历史记录的显示隐藏
 	courseCloseNhistory.onclick = function(){
 		Util.hidden(markNhistory);
 	};
 	historyN.onclick = function(){
 		Util.show(markNhistory);
+		clickBtnStop();
 	};
+	//点击历史记录列表开始对应的课程
 	courseListNhistory.onclick = function(e){
 		if(e.target.id){
 			nowId = e.target.id.substring(3);
@@ -403,6 +427,7 @@ window.onload = function() {
 			alreadyId[nowId] = 1;
 		}
 	};
+	//自定义练习的显示隐藏
 	courseCloseNuser.onclick = function(){
 		Util.hidden(markNuser);
 		userTextN.value = '';
@@ -410,7 +435,9 @@ window.onload = function() {
 	};
 	userDefineN.onclick = function(){
 		Util.show(markNuser);
+		clickBtnStop();
 	};
+	//添加自定义练习
 	userSureN.onclick = function(){
 		userStr = userTextN.value;
 		userTime = parseInt(userTimeN.value);
@@ -437,17 +464,22 @@ window.onload = function() {
 		userTextN.value = '';
 		userTimeN.value = '';
 	};
+	//自定义历史的显示隐藏
 	userHistoryN.onclick = function(){
 		Util.show(userHistoryMarkN);
+		clickBtnStop();
 	};
 	userHistoryCourseCloseN.onclick = function(){
 		Util.hidden(userHistoryMarkN);
 	};
+	//用户自定义课程列表
 	userHistoryCourseListN.onclick = function(e){
+		//点击的是X，就删除
 		if(e.target.className){
 			var delId = e.target.id.substring(4);
 			delUserInfo(delId);
 		}
+		//点击的是课程就加载
 		if(e.target.id){
 			nowId = -1;
 			var userId = e.target.id.substring(4);
@@ -458,9 +490,11 @@ window.onload = function() {
 			Util.hidden(userHistoryMarkN);
 		}
 	};
+	//清空自定义练习
 	clearUserInfoN.onclick = function(){
 		clearUserInfo();
 	};
+	//随机课程绑定
 	randomId.onclick = function(){
 		randId = parseInt(Math.random()*(course.length-1));
 		if(!course[randId]){
@@ -472,6 +506,7 @@ window.onload = function() {
 		alreadyId[randId] = 1;
 		Util.$(randId).style.backgroundColor = liBgcolor;
 	};
+	//回放绑定
 	playbackN.onclick = playback;
 	// markN.onclick = function(){
 	// 	Util.hidden(markN);
@@ -505,7 +540,7 @@ window.onload = function() {
 		}
 		//打完了
 		if(currCharIndex === text.length){
-			selectChar(currCharIndex);
+			selectChar(currCharIndex);//去掉最后一个绿格
 			if(time > 0){//规定时间内敲完了
 				time = 0;
 				complete = true;
@@ -530,7 +565,7 @@ window.onload = function() {
 			updateView();
 		}
 		kc++;//记录有效击键次数
-		//下面是击键日志记录
+		//下面是击键时间和顺序记录
 		var logK = {};
 		logK.k = keyCode;
 		logK.t = +new Date();
@@ -546,6 +581,7 @@ window.onload = function() {
 		var keyCode = event.keyCode || event.which || event.charCode;
 		if(keyCode === 32){
         	event.preventDefault();//屏蔽浏览器默认的空格快捷功能，
+        	//虽然能够做到屏蔽快捷键的能力，但是在自定义练习的文本框中添加文本时就没法敲空格了
 		}
 		switch(keyCode){
 			case 13: controller();break;
