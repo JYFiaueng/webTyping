@@ -133,5 +133,57 @@ var Util = {
 			this.set(name, '', new Date(0), path, domain, secure);
 		},
 	},
+	//网页可见性API
+	pageVisibility: (function(){
+		var prefixSupport, keyWithPrefix = function(prefix, key) {
+			if (prefix !== "") {
+			// 首字母大写
+				return prefix + key.slice(0,1).toUpperCase() + key.slice(1);
+			}
+			return key;
+		};
+		var isPageVisibilitySupport = (function(){
+			var support = false;
+			if (typeof window.screenX === "number") {
+				["webkit", "moz", "ms", "o", ""].forEach(function(prefix) {
+					if (support == false && document[keyWithPrefix(prefix, "hidden")] != undefined) {
+						prefixSupport = prefix;
+						support = true;
+					}
+				});
+			}
+			return support;
+		})();
+
+		var isHidden = function() {
+			if (isPageVisibilitySupport) {
+				return document[keyWithPrefix(prefixSupport, "hidden")];
+			}
+			return undefined;
+		};
+
+		var visibilityState = function() {
+			if (isPageVisibilitySupport) {
+				return document[keyWithPrefix(prefixSupport, "visibilityState")];
+			}
+			return undefined;
+		};
+
+		return {
+			hidden: isHidden(),//是否可见
+			visibilityState: visibilityState(),//现在状态
+			visibilitychange: function(fn, usecapture) {//绑定可见性变化事件
+				usecapture = undefined || false;
+				if (isPageVisibilitySupport && typeof fn === "function") {
+					return document.addEventListener(prefixSupport + "visibilitychange", function(evt) {
+						this.hidden = isHidden();
+						this.visibilityState = visibilityState();
+						fn.call(this, evt);
+					}.bind(this), usecapture);
+				}
+				return undefined;
+			}
+		};
+	})(undefined),
 
 };

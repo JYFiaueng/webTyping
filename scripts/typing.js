@@ -38,6 +38,8 @@ window.onload = function() {
 	var isPlayback = false;//当前是否正在回放练习
 	var controllerSpace = true;//解决禁掉浏览器默认空格快捷键之后用户自定义文本框无法输入空格的问题
 	var markNowEnter = false;//标示当前处于遮罩状态回车无效
+	var RegExpNoChinaChar = /[\u4e00-\u9fa5]+/;//是汉字的正则
+	var RegExpBeginNoZeroNumber = /^[1-9]\d+$/;//开头不为0的一串数字的正则
 ////////////////-------------------这里放需要进行DOM操作的变量------------------
 	var timerN =  Util.$('timer');
 	var controllerN = Util.$('controller');
@@ -218,7 +220,7 @@ window.onload = function() {
 					rate.innerHTML = Tkpm;
 				}
 				timerN.innerHTML = Math.floor(time/60)+':'+time%60;
-			}, 900);
+			}, 999);
 		}else{
 			timerN.innerHTML = Math.floor(time/60)+':'+time%60;
 			clearInterval(t);
@@ -341,11 +343,18 @@ window.onload = function() {
 	//首次声明
 	var init = function(){
 		Util.ajaxGet('data/data.json', ajaxSuccess, ajaxFailure, timeout, timeoutFn);
-		welcomeCookie();
 		localUserDefine();
 		loadText(text, textN, strLength);
 		updateView();
 		countDown();
+	};
+	//用于回放的击键记录函数
+	var keyNote = function(keycode){
+		var logK = {};
+		logK.k = keycode;
+		logK.t = +new Date();
+		log[logKCount] = logK;
+		logKCount++;
 	};
 	//回放功能实现，回放上一次的按键过程
 	var playback = function(){
@@ -379,17 +388,26 @@ window.onload = function() {
 		isPlayback = true;
 		//根据两次按键的时间差来进行回放
 		var pb = function(){
-			event.keyCode = logCopy[i].k;
-			okp(event);
-			if(i+1 === logKCountCopy){
-				isPlayback = false;
-				return;
+			//这的主要目的就是为了解决用户在练习期间回车暂停的问题
+			//由于回放是根据时间来的，所以用户暂停后时间就不对了
+			//原来只是将有效击键记录了下来，现在将回车也进行了记录
+			//这里判断的就是如果是两次连续的回车，就将回车之间的时间差置为0
+			//这样就去掉了在回放时将用户暂停的时间也进行回放的问题
+			if(logCopy[i].k === 13 && logCopy[i+1].k === 13){
+				timeDifference = 0;
+			}else{
+				event.keyCode = logCopy[i].k;
+				okp(event);
+				if(i+1 === logKCountCopy){
+					isPlayback = false;
+					return;
+				}
+				timeDifference = logCopy[i+1].t - logCopy[i].t;
 			}
-			timeDifference = logCopy[i+1].t - logCopy[i].t;
 			i++;
 			setTimeout(pb, timeDifference);
 		};
-		setTimeout(pb, 1000);
+		setTimeout(pb, 0);
 	};
 	//此函数的作用是为了在用户练习期间点击了按钮，那么就将练习停止
 	//不然的话点击了按钮出来遮罩层练习的倒计时还在进行中
@@ -397,6 +415,7 @@ window.onload = function() {
 		if(run){
 			controller();
 		}
+		keyNote(13);
 	};
 	//此函数是为了解决在回放的时候点击其他按钮导致回放结束的问题，但这不是根本的解决方法
 	//这样只是在回放的时候禁止用户的点击，最好的效果是点击其他按钮暂停回放，关闭遮罩之后继续回放
@@ -476,18 +495,27 @@ window.onload = function() {
 	//添加自定义练习
 	userSureN.onclick = function(){
 		userStr = userTextN.value;
-		userTime = parseInt(userTimeN.value);
 		if(userStr.length > 300 || userStr.length < 1){
 			alert('长度不对');
 			return;
 		}
+		if(RegExpNoChinaChar.test(userStr)){
+			alert('不能包含汉字');
+			return;
+		}
+		if(!RegExpBeginNoZeroNumber.test(userTimeN.value)){
+			alert('时间只能是数字，开头不能为0');
+			userTimeN.value = '';
+			return;
+		}
+		userTime = parseInt(userTimeN.value);
 		if(!!!userTime){
-			alert('时间不对');
+			alert('无法转为整数');
 			userTimeN.value = '';
 			return;
 		}
 		if(userTime > 300 || userTime < 1){
-			alert('时间不对');
+			alert('超过300了');
 			userTimeN.value = '';
 			return;
 		}
@@ -555,17 +583,21 @@ window.onload = function() {
 	};
 	//回放绑定
 	playbackN.onclick = playback;
-	// markN.onclick = function(){
-	// 	Util.hidden(markN);
-	// };
-	// markNhistory.onclick = function(){
-	// 	Util.hidden(markNhistory);
-	// };
-	// markNuser.onclick = function(){
-	// 	Util.hidden(markNuser);
-	// 	userTextN.value = '';
-	// 	userTimeN.value = '';
-	// };
+
+	//当前页面是否被隐藏
+	// console.log(Util.pageVisibility.hidden);
+	//页面的当前状态
+	// console.log(Util.pageVisibility.visibilityState);
+	//当页面可见状态发生变化时触发此事件，如果用户当前正处于打字状态，页面状态变化之后就停下
+	Util.pageVisibility.visibilitychange(function(){
+		if(run && !complete){
+			console.log('窗口可见性变化');
+			stop();
+			keyNote(13);
+			countDown();
+		}
+	});
+
 	var okp = function(event) {
 		console.log(event.keyCode || event.which || event.charCode);
 		if(!run){
@@ -613,11 +645,7 @@ window.onload = function() {
 		}
 		kc++;//记录有效击键次数
 		//下面是击键时间和顺序记录
-		var logK = {};
-		logK.k = keyCode;
-		logK.t = +new Date();
-		log[logKCount] = logK;
-		logKCount++;
+		keyNote(keyCode);
 	};
 
 	document.onkeypress = okp;
@@ -637,7 +665,7 @@ window.onload = function() {
 			return;
 		}
 		switch(keyCode){
-			case 13: controller();break;
+			case 13: keyNote(13);controller();break;
 			case 32: okp(event);break;
 			default: break;
 		}
@@ -650,7 +678,7 @@ window.onload = function() {
 		var toggle = true;
 		return function(){
 			if(toggle){
-				Util.animate(divBtnN, 'top', -493);
+				Util.animate(divBtnN, 'top', -490);
 				toggleN.value = '展开';
 				toggle = false;
 			}else{
@@ -660,6 +688,6 @@ window.onload = function() {
 			}
 		};
 	})();
-
+	welcomeCookie();
 	init();
 };

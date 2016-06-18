@@ -482,3 +482,8 @@ ul.status li em
 #Welcome{
 	text-align: center;
 }
+
+#userText{
+	width: 500px;
+	height: 100px;
+}
