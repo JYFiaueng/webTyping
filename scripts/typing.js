@@ -423,6 +423,8 @@ window.onload = function() {
 	var isPlaybackFn = function(){
 		if(isPlayback){
 			return true;
+		}else{
+			return false;
 		}
 	};
 	//-------------------------------事件绑定区-------------------------------
@@ -590,6 +592,9 @@ window.onload = function() {
 	// console.log(Util.pageVisibility.visibilityState);
 	//当页面可见状态发生变化时触发此事件，如果用户当前正处于打字状态，页面状态变化之后就停下
 	Util.pageVisibility.visibilitychange(function(){
+		if(isPlaybackFn()){
+			return;
+		}
 		if(run && !complete){
 			console.log('窗口可见性变化');
 			stop();
