@@ -29,7 +29,7 @@ html
 
 body
 {
-	width: 1000px;
+	width: 1012px;
 	margin: 20px auto;
 	background: rgba(0, 0, 0, 0.5);
 	padding: 10px;
@@ -132,7 +132,7 @@ ul.status li em
 
 #keyboard
 {
-	width: 624px;
+	width: 636px;
 	margin-left: 10px;
 	background: white;
 	border: 1px solid #CCC;
