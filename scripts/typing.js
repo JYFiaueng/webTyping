@@ -29,7 +29,7 @@ window.onload = function() {
 	var failStr = '未完成';
 	var winStr = '完成';
 	var onLine = navigator.onLine;//是否在线
-	var timeout = 5000;//请求超时值，本地测试改成5毫秒就能出现了
+	var timeout = 10000;//请求超时值
 	var liBgcolor = 'rgba(100,200,150,0.7)';//li点击之后的背景色
 	var userCourse = [];//用户自定义课程
 	var userCount = -1;//用户自定义课程id
@@ -242,7 +242,7 @@ window.onload = function() {
 	};
 	//请求超时回调函数
 	var timeoutFn = function(){
-		alert('请求超时，网不好!');
+		alert('请求超时，没有拉取到课程列表，请刷新或玩一玩自定义练习!');
 	};
 	//课程请求失败
 	var ajaxFailure = function(){
