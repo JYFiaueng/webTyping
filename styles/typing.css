@@ -1,9 +1,3 @@
-*
-{
-	padding: 0;
-	margin: 0;
-}
-
 .columns-container
 {
 	display: block;
@@ -60,45 +54,36 @@ ul li
 
 ul.status
 {
-	background: #DDD linear-gradient(#39f, #fff, #39f);
-	// border: 1px solid #BBB;
+	color: #fff;
 }
 
 ul.status li
 {
-	width: 290px;
-	// border-left: 1px solid #EEE;
-	// border-right: 1px solid #999;
+	width: 317px;
 	padding: 10px;
 	text-align: center;
 }
 
-ul.status li:last-child
-{
-	border-right: none;
-}
-
 ul.status li em
 {
-	font-style: normal;
-	font-size: 2.5em;
+	font-size: 3em;
 }
 
 #text
 {
 	max-height: 220px;
 	overflow: hidden;
-	background: white;
+	font-size: 1.5em;
+	background: rgba(1,1,1,0.3);
 	border-radius: 10px;
 	margin-bottom: 15px;
-	// border: 1px solid gray;
 }
 
 #text p
 {
 	border-bottom: 1px solid #39f;
 	padding: 4px 30px;
-	color: gray;
+	color: #fff;
 }
 
 #text p:last-child
@@ -117,12 +102,12 @@ ul.status li em
 
 #text p span.current
 {
-	background: lightgreen;
+	background: #0f0;
 }
 
 #text p span.error
 {
-	background: #FED0D0;
+	background: #f00;
 }
 
 #left-hand, #keyboard
@@ -134,11 +119,11 @@ ul.status li em
 {
 	width: 636px;
 	margin-left: 10px;
-	background: white;
+	background: rgba(0,0,0,0.5);
 	border: 1px solid #CCC;
 	padding: 8px;
 	border-radius: 10px;
-	color: gray;
+	color: #fff;
 }
 
 #keyboard li.key
@@ -156,8 +141,7 @@ ul.status li em
 
 #keyboard li.key.current
 {
-	border-color: lightgreen;
-	background: yellow;
+	background-color: #0f0;
 }
 
 #keyboard li#backspace, 
@@ -173,7 +157,11 @@ ul.status li em
 {
 	padding: 6px 5px;
 	width: auto;
-	background: #EEE;
+	background: rgba(0,0,0,0.5);
+}
+
+#keyboard li#backspace{
+	padding: 6px 9px;
 }
 
 #keyboard li#tab
@@ -262,7 +250,7 @@ ul.status li em
 #right-hand
 {
 	float: right;
-	background-position: -150px 0px;	
+	background-position: -150px 0px;
 }
 
 #left-hand.finger-1
@@ -314,10 +302,6 @@ ul.status li em
 {
 	background-position: -150px -750px;
 }
-
-
-
-
 
 .DivBtn{
 	width: 100px;
@@ -486,4 +470,18 @@ ul.status li em
 #userText{
 	width: 500px;
 	height: 100px;
+}
+
+#controller{
+	animation: controller 0.8s infinite;
+}
+
+@keyframes controller{
+	0%{
+		background-color: rgba(0, 130, 200, 0.9);
+	}
+	100%{
+		background-color: rgba(0, 60, 200, 0.9);
+		box-shadow: 0 0 20px rgba(0, 60, 200, 0.9);
+	}
 }

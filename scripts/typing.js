@@ -220,7 +220,7 @@ window.onload = function() {
 					rate.innerHTML = Tkpm;
 				}
 				timerN.innerHTML = Math.floor(time/60)+':'+time%60;
-			}, 999);
+			}, 980);
 		}else{
 			timerN.innerHTML = Math.floor(time/60)+':'+time%60;
 			clearInterval(t);
