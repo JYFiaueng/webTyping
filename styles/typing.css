@@ -36,6 +36,7 @@ h1
 	line-height: 1em;
 	padding: 10px;
 	color: #fff;
+	font-size: 20px;
 	text-shadow:1px 1px 1px #fff;
 	border-bottom: 2px solid #3ADDE6;
 	margin-bottom: 20px;
@@ -158,6 +159,7 @@ ul.status li em
 	padding: 6px 5px;
 	width: auto;
 	background: rgba(0,0,0,0.5);
+	font-size: 13px;
 }
 
 #keyboard li#backspace{
@@ -201,6 +203,7 @@ ul.status li em
 #keyboard li.key.two-line
 {
 	line-height:14px;
+	font-size: 12px;
 }
 
 #keyboard li.key.last
@@ -465,7 +468,7 @@ ul.status li em
 
 #Welcome{
 	text-align: center;
-	color: 30px;
+	font-size: 30px;
 }
 
 #userText{
