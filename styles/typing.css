@@ -1,0 +1,491 @@
+.columns-container
+{
+	display: block;
+}
+
+.columns-container:after
+{
+	clear: both;
+	content: "";
+	height: 0;
+	visibility: hidden;
+	display: block;
+}
+
+html
+{
+  background: #444 url("images/bg.jpg");
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+}
+
+body
+{
+	width: 1012px;
+	margin: 20px auto;
+	background: rgba(0, 0, 0, 0.5);
+	padding: 10px;
+	border-radius: 15px;
+	font: 14px/20px "simsun", Arial, Sans-serif;
+}
+
+h1
+{
+	line-height: 1em;
+	padding: 10px;
+	color: #fff;
+	font-size: 20px;
+	text-shadow:1px 1px 1px #fff;
+	border-bottom: 2px solid #3ADDE6;
+	margin-bottom: 20px;
+}
+
+ul
+{
+	margin-bottom: 15px;
+	list-style: none;
+}
+
+ul li
+{
+	float: left;
+}
+
+ul.status
+{
+	color: #fff;
+}
+
+ul.status li
+{
+	width: 315px;
+	padding: 10px;
+	text-align: center;
+}
+
+ul.status li em
+{
+	font-size: 3em;
+}
+
+#text
+{
+	max-height: 220px;
+	overflow: hidden;
+	font-size: 1.5em;
+	background: rgba(1,1,1,0.3);
+	border-radius: 10px;
+	margin-bottom: 15px;
+}
+
+#text p
+{
+	border-bottom: 1px solid #39f;
+	padding: 4px 30px;
+	color: #fff;
+}
+
+#text p:last-child
+{
+	border-bottom: none;
+}
+
+#text p span
+{
+	width: 11.6px;
+	display: inline-block;
+	text-align: center;
+	padding: 8px 2px;
+	font-size: 1.5em;
+}
+
+#text p span.current
+{
+	background: #0f0;
+}
+
+#text p span.error
+{
+	background: #f00;
+}
+
+#left-hand, #keyboard
+{
+	float: left;
+}
+
+#keyboard
+{
+	width: 636px;
+	margin-left: 10px;
+	background: rgba(0,0,0,0.5);
+	border: 1px solid #CCC;
+	padding: 8px;
+	border-radius: 10px;
+	color: #fff;
+}
+
+#keyboard li.key
+{
+	padding: 6px 12px;
+	font-size: 0.5em;
+	height: 24px;
+	width: 12px;
+	line-height: 24px;
+	text-align: center;
+	margin:2px;
+	border: 1px solid #CCC;
+	border-radius: 5px;
+}
+
+#keyboard li.key.current
+{
+	background-color: #0f0;
+}
+
+#keyboard li#backspace, 
+#keyboard li#l-shift,
+#keyboard li#r-shift, 
+#keyboard li#l-alt, 
+#keyboard li#r-alt, 
+#keyboard li#l-ctrl, 
+#keyboard li#r-ctrl, 
+#keyboard li#enter,
+#keyboard li#tab,
+#keyboard li#capslock
+{
+	padding: 6px 5px;
+	width: auto;
+	background: rgba(0,0,0,0.5);
+	font-size: 13px;
+}
+
+#keyboard li#backspace{
+	padding: 6px 9px;
+}
+
+#keyboard li#tab
+{
+	width: 4em;
+}
+
+#keyboard li#capslock
+{
+	width: 6em;
+}
+
+#keyboard li#enter
+{
+	width: 58px;
+}
+
+#keyboard li#l-shift,
+#keyboard li#r-shift
+{
+	width: 86px;
+}
+
+#keyboard li#l-ctrl,
+#keyboard li#r-ctrl,
+#keyboard li#l-alt,
+#keyboard li#r-alt
+{
+	width: 50px;
+}
+
+#keyboard li#space
+{
+	width: 330px;
+}
+
+#keyboard li.key.two-line
+{
+	line-height:14px;
+	font-size: 12px;
+}
+
+#keyboard li.key.last
+{
+	width: 26px;
+}
+
+#keyboard li.key.letter
+{
+	font-size: 20px;
+	width:20px;
+	padding:6px 8px;
+	
+}
+
+#left-hand, #right-hand
+{
+	width: 150px;
+	height: 150px;
+	margin: 0 10px;
+	background: transparent url(images/hand-sprite.png) no-repeat 0 0;
+}
+
+#left-hand p, #right-hand p
+{
+	width: 32px;
+	height: 32px;
+	margin: 160px auto 0px auto;
+	background: #3ADDE6;
+	color: white;
+	border-radius: 32px;
+	text-align:center;
+	line-height:32px;
+	position: relative;
+}
+
+#left-hand p
+{
+	left: -10px;
+}
+
+#right-hand p
+{
+	right: -10px;
+}
+
+#right-hand
+{
+	float: right;
+	background-position: -150px 0px;
+}
+
+#left-hand.finger-1
+{
+	background-position: 0px -150px;
+}
+
+#left-hand.finger-2
+{
+	background-position: 0px -300px;
+}
+
+#left-hand.finger-3
+{
+	background-position: 0px -450px;
+}
+
+#left-hand.finger-4
+{
+	background-position: 0px -600px;
+}
+
+#left-hand.finger-5
+{
+	background-position: 0px -750px;
+}
+
+#right-hand.finger-1
+{
+	background-position: -150px -150px;
+}
+
+#right-hand.finger-2
+{
+	background-position: -150px -300px;
+}
+
+#right-hand.finger-3
+{
+	background-position: -150px -450px;
+}
+
+#right-hand.finger-4
+{
+	background-position: -150px -600px;
+}
+
+#right-hand.finger-5
+{
+	background-position: -150px -750px;
+}
+
+.DivBtn{
+	width: 100px;
+	position: fixed;
+	top: 20px;
+	right: 20px;
+	padding: 10px;
+	border-radius: 5px;
+	background: #DDD linear-gradient(#3ff, #39f);
+}
+.DivBtn input[type='button']{
+	border: none;
+	width: 100px;
+	height: 45px;
+	font-size: 18px;
+	color: #fff;
+	margin-bottom: 10px;
+	background-color: rgba(0, 130, 200, 0.9);
+	border-radius: 3px;
+	cursor: pointer;
+	transition: all 0.2s;
+}
+.DivBtn input[type='button']:last-child{
+	margin-bottom: 0px;
+}
+.DivBtn input[type='button']:hover{
+	background-color: rgba(0, 60, 200, 0.9);
+}
+
+
+
+/*-----------------------dialog----------------------*/
+.mark{
+	background-color: rgba(0, 0, 0, 0.5);
+	position: fixed;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	display: none;
+}
+.mark .dialog{
+	position: absolute;
+	top: 50px;
+	left: 50%;
+	width: 500px;
+	max-height: 550px;
+	margin-left: -250px;
+	border-radius: 10px;
+	background-color: rgba(255, 255, 255, 0.9);
+	padding: 20px;
+}
+.mark .dialog h3{
+	text-indent: 10px;
+	font-size: 22px;
+	line-height: 40px;
+	color: #390;
+	text-shadow: 1px 1px 1px #39f;
+}
+.mark .dialog input[type='button']{
+	border: none;
+	position: absolute;
+	right: 10px;
+	bottom: 10px;
+	width: 110px;
+	height: 30px;
+	cursor: pointer;
+	background-color: #9f9;
+	border-radius: 5px;
+	font-size: 14px;
+	color: #306;
+	font-weight: bold;
+	transition: all 0.3s;
+}
+.mark .dialog input[type='button']:hover{
+	background-color: #f00;
+}
+.mark .dialog .close{
+	position: absolute;
+	top: 20px;
+	right: 30px;
+	width: 30px;
+	height: 30px;
+	color: red;
+	font-size: 30px;
+	font-weight: bold;
+	line-height: 30px;
+	text-align: center;
+	border-radius: 15px;
+	background-color: rgba(50, 222, 100, 0.5);
+	cursor: pointer;
+	transition: all 0.2s;
+}
+.mark .dialog .close:hover{
+	background-color: rgba(50, 222, 100, 0.8);
+}
+.mark .dialog ul li{
+	float: left;
+	position: relative;
+	width: 110px;
+	height: 110px;
+	color: #34f;
+	margin-right: 20px;
+	margin-bottom: 20px;
+	cursor: pointer;
+	text-align: center;
+	border-radius: 5px;
+	background-color: rgba(30, 255, 255, 0.3);
+}
+.mark .dialog ul li span{
+	width: 20px;
+	height: 20px;
+	color: red;
+	position: absolute;
+	right: 1px;
+	top: 1px;
+	border-radius: 2px;
+	line-height: 20px;
+	text-align: center;
+	background-color: rgba(50, 222, 100, 0.6);
+	cursor: pointer;
+	transition: all 0.2s;
+}
+.mark .dialog ul li span::after{
+	content: '';
+	position: absolute;
+	right: -15px;
+	width: 15px;
+	height: 40px;
+	background-color: rgba(50, 222, 100, 0);
+}
+.mark .dialog ul li span:hover::after{
+	content: '删除';
+	background-color: rgba(50, 222, 100, 0.6);
+}
+.mark .dialog ul li span:hover{
+	font-weight: bold;
+	background-color: rgba(50, 222, 100, 1);
+}
+.mark .dialog ul li::before{
+	content: '';
+	width: 110px;
+	height: 110px;
+	color: #fff;
+	font-size: 25px;
+	text-align: center;
+	line-height: 110px;
+	border-radius: 5px;
+	position: absolute;
+	display: block;
+	background-color: rgba(0, 0, 0, 0);
+	transition: all 0.2s;
+}
+.mark .dialog ul li:hover::before{
+	content: 'exercise';
+	background-color: rgba(0, 0, 0, 0.6);
+}
+.mark .dialog ul li:nth-child(4n){
+	margin-right: 0px;
+}
+
+#Welcome{
+	text-align: center;
+	font-size: 30px;
+}
+
+#userText{
+	width: 500px;
+	height: 100px;
+}
+
+#controller{
+	animation: controller 0.8s infinite;
+}
+
+@keyframes controller{
+	0%{
+		background-color: rgba(0, 130, 200, 0.9);
+	}
+	100%{
+		background-color: rgba(0, 60, 200, 0.9);
+		box-shadow: 0 0 20px rgba(0, 60, 200, 0.9);
+	}
+}
